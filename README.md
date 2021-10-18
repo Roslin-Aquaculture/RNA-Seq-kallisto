@@ -1,1 +1,7 @@
 # RNA-Seq-kallisto
+
+FASTQC
+
+FASTP
+
+KALLISTO
