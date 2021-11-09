@@ -3,9 +3,9 @@
 
 #1 DOWNLOAD FILES
 #Fist of all, we need to download the raw files from the sequencing service website. We can do this in the server directly
-
+```
 wget https://...
-
+```
 #2 UNZIP THE FILES 
 #We will have 3 files in our folder: name1.zip MD5.txt checkSize.xls
 #UNZIP THE .zip FILE, which is the one that contains the raw data
