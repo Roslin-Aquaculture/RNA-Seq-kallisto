@@ -1,7 +1,8 @@
 # RNA-Seq differential expression analysis using Kallisto and DESeq2
 Here we describe a pipeline to analyse RNA sequencing data (NovaSeq 6000 PE150). Overall, we need to 1) check the quality of raw data (FASTQC analyisis), 2) filter te raw data (FASTP), and 3) estimate the gene expression of the RNAseq data (KALLISTO). Kallisto is a program for quantifying abundances of transcripts from bulk RNA-Seq data. It is based on the pseudoalignment of reads against the transcriptome of a species for rapid estimation of transcript expression. Of note, this pipeline is described considering that the genome/transcriptome of the species that we are working with is publicly available.
 
-   * [1. Quality control with FastQC](#1-quality-control-withFastQC)
+   * [1. Quality control with FastQC](#1-quality-control-with-FastQC)
+   * [2. Filtering using fastp](#2-filtering-using-fastp)
 
 ## 0. Download files
 The first step is downloading the raw sequencing files into our server of computer. Most sequencing providers will upload the raw files into an FTP server. The files can usually be downloaded using the Unix command "wget":
