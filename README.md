@@ -5,7 +5,7 @@ Here we describe a pipeline to analyse RNA sequencing data (NovaSeq 6000 PE150).
    * [1. Quality control with FastQC](#1-quality-control-with-FastQC)
    * [2. Filtering using fastp](#2-filtering-using-fastp)
    * [3. Quantification using kallisto](#3-quantification-using-kallisto)
-   * [4. Differential expression using DESeq2)(#4-differential-expression-using-DESeq2)
+   * [4. Differential expression using DESeq2](#4-differential-expression-using-DESeq2)
 
 ## 0. Download files
 The first step is downloading the raw sequencing files into our server of computer. Most sequencing providers will upload the raw files into an FTP server. The files can usually be downloaded using the Unix command "wget":
