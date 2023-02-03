@@ -45,7 +45,7 @@ To create the index of the transcriptome, the command is:
 ```
 kallisto index -i transcriptome.fa.idx transcriptome.fa
 ```
-To estimate the expression of each transcript in each sample, we use the "quant" function of kallisto:
+To estimate the expression of each transcript in each sample, we use the `quant` function of kallisto:
 ```
 kallisto quant -i transcriptome.fa.idx -o sampleA -b 100 sampleA_filtered_1.fastq.gz sampleA_filtered_2.fastq.gz 
 ```
