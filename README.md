@@ -1,36 +1,23 @@
 # RNA-Seq-kallisto
-#Here we describe a pipeline to analyse RNA sequencing data (NovaSeq 6000 PE150). Overall, we need to 1) check the quality of raw data (FASTQC analyisis), 2) filter te raw data (FASTP), and 3) estimate the gene expression of the RNAseq data (KALLISTO). Kallisto is a program for quantifying abundances of transcripts from bulk RNA-Seq data. It is based on the novel idea of pseudoalignment for rapidly determining the compatibility of reads with targets, without the need for alignment. Of note, this pipeline is described considering that the genome/transcriptome of the species that we are working with is publicly available.
+Here we describe a pipeline to analyse RNA sequencing data (NovaSeq 6000 PE150). Overall, we need to 1) check the quality of raw data (FASTQC analyisis), 2) filter te raw data (FASTP), and 3) estimate the gene expression of the RNAseq data (KALLISTO). Kallisto is a program for quantifying abundances of transcripts from bulk RNA-Seq data. It is based on the pseudoalignment of reads against the transcriptome of a species for rapid estimation of transcript expression. Of note, this pipeline is described considering that the genome/transcriptome of the species that we are working with is publicly available.
 
-## 0. DOWNLOAD FILES
-#Fist of all, we need to download the raw files from the sequencing service website. We can do this in the server directly
+## 0. Download files
+The first step is downloading the raw sequencing files into our server of computer. Most sequencing providers will upload the raw files into an FTP server. The files can usually be downloaded using the Unix command "wget":
 ```
 wget https://...
 ```
-#2 UNZIP THE FILES 
-#We will have 3 files in our folder: name1.zip MD5.txt checkSize.xls
-#UNZIP THE .zip FILE, which is the one that contains the raw data
-```
-unzip name1.zip
-```
-#It creates a new folder that we can rename as "raw_data". All files should be .fastq or .fq (type of file received from sequencing)
+Paired-end sequencing generates two output fastq files for each sample. These usually end in "_1.fastq.gz" and "_2.fastq.gz" (but "_R1_001.fastq.gz" and "_R2_001.fastq.gz" are also frequent). The files are usually compressed using gunzip - there is no need to unzip them, most software will work with gunzipped files. The fastq files will usually come with corresponding MD% files to check that the integrity of the downloaded files.
 
-#You might need space and time to do this, so you can easily ask for a compute session when using Cesga (Galician Supercomputing centre)). Sometimes you might need to wait for some time until the session is allocated for you
+
+## 1. Quality control with FastQC 
+Once we have downloaded the fastq files, it is good practice to check their quality. It can be done using the software [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/). The command to run FastQC in a sample (a pair of fastq files) is:
+
 ```
-compute -c 8
+fastqc sampleA_1.fastq.gz
 ```
-#3 FASTQC - QUALITY 
-#Once we obtain the .fastq or .fq files, we have to check their quality and we do that with the program fastqc. We will work from the 'raw_data' folder, so that the results will come up in that folder only
-#The latest version of the fastqc program is 0.11.7. #When working on Cesga, we will need to load cesga/2018 as well
+Usually, it will be more convinient to run FastQC for all samples at once:
 ```
-module load fastqc/0.11.7 cesga/2018
-```
-#You can do the QC for each sample:
-```
-fastqc sampleE281/*.fq.gz #By doing this, we are taking 2 files/each sample (_1 and _2) because Illumina sequencing is “paired-end”
-```
-#And you can also do the QC for all samples at once:
-```
-fastqc sampleE282/*.fq.gz sampleE283/*.fq.gz sampleP01/*.fq.gz
+fastqc *fastq.gz
 ```
 #You will obtain 2 output files from each sample: fastqc.zip and fastqc.html, which you might organize in a new folder called 'QC_samples'
 
