@@ -45,7 +45,7 @@ kallisto quant -i transcriptome.fa.idx -o sampleA -b 100 sampleA_filtered_1.fast
 ```
 The results for each sample will be a separate folder with the name of the sample (-o). That folder will contain three files: abundance.h5, abundance.tsv, and run_info.json
 
-
+## 4. Differential expression using DESeq2
 
 
 
