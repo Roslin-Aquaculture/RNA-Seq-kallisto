@@ -1,7 +1,7 @@
 # RNA-Seq-kallisto
 #Here we describe a pipeline to analyse RNA sequencing data (NovaSeq 6000 PE150). Overall, we need to 1) check the quality of raw data (FASTQC analyisis), 2) filter te raw data (FASTP), and 3) estimate the gene expression of the RNAseq data (KALLISTO). Kallisto is a program for quantifying abundances of transcripts from bulk RNA-Seq data. It is based on the novel idea of pseudoalignment for rapidly determining the compatibility of reads with targets, without the need for alignment. Of note, this pipeline is described considering that the genome/transcriptome of the species that we are working with is publicly available.
 
-#1 DOWNLOAD FILES
+## 1 DOWNLOAD FILES
 #Fist of all, we need to download the raw files from the sequencing service website. We can do this in the server directly
 ```
 wget https://...
