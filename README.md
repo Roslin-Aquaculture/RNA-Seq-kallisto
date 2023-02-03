@@ -39,43 +39,11 @@ To create the index of the transcriptome, the command is:
 ```
 kallisto index -i transcriptome.fa.idx transcriptome.fa
 ```.
-
-
-#You have to indicate both files (forward and reverse)/each sample (--in 1 and --in 2), and also the folder (create it in advance) and names of the output files that are still paired (--out1, --out2). --unpaired1, --unpaired2 indicate the output files for the reads that are not 'paired'. -l 35: this specifies that if a read is shorter than 50 basepairs after all filters, it should be removed. -q: quality threshold per base required (default: 15, which means that a Phred quality score of at least 15 is required) -h: specifies name for the html file with plots showing the read quality before and after filtering 
+To estimate the expression of each transcript in each sample, we use the "quant" function of kallisto:
 ```
-fastp --in1 raw_data/E283_1.fq.gz --in2 raw_data/E283_2.fq.gz --out1 filtered/E283_1.filtered.fastq.gz --out2 filtered/E283_2.filtered.fastq.gz --unpaired1 filtered/E283_1.unpaired.fastq.gz --unpaired2 filtered/E283_2.unpaired.fastq.gz -l 35 -q 20 -h filtered/E283.html &> filtered/E283.log
+kallisto quant -i transcriptome.fa.idx -o sampleA -b 100 sampleA_filtered_1.fastq.gz sampleA_filtered_2.fastq.gz 
 ```
-
-#ESTIMATE THE EXPRESSION - KALLISTO
-#You will now match the transcriptome with the FILTERED data to obtain the gene expression of your RNAseq. Do this from the folder 'RABBIT'. Kallisto will create the '-o folder' inside 'RABBIT', so don't create it in advance, and you will 'call' your transcriptome with '-i'. The 'transcriptome' folder should be inside 'RABBIT'. -b 100 indicates the maximum lenght of a read (not sure about this?¿). Finally you have to indicate the directory of the filtered data (both paired reads)
-#You can do that with a compute session if you have few samples. Else, you can queue them with .sh and 'sbatch' (same procedure as for FASTP)
-#How to create a .sh file to run kallisto? You have to do a different script for each sample and run them independently. See below an example for ONE SAMPLE.
-```
-#!/bin/sh
-#SBATCH -p thinnodes
-#SBATCH -N 1
-#SBATCH -n 1
-#SBATCH -c 8
-#SBATCH -t 2:00:00
-#SBATCH --mail-type=begin
-#SBATCH --mail-type=end
-#SBATCH --mail-user=paularodriguez.villamayor@usc.es
-
-module load cesga/2018 gcccore/6.4.0 kallisto/0.46.1
-
-kallisto quant -i transcriptome/transcriptome_rabbit_index_kallisto.idx -o kallisto_results_E283 -b 100 /mnt/lustre/scratch/home/usc/ge/prv/fetos/filtered/E283_1.filtered.fastq.gz /mnt/lustre/scratch/home/usc/ge/prv/fetos/filtered/E283_2.filtered.fastq.gz
-```
-
-#You convert the .txt document into .sh 
-#I created the .txt in Windows, then converted into .sh and then transfered to Linux #You need to use the command dos2unix to transfer from windows to linux
-```
-dos2unix name.sh
-```
-#Run the file
-```
-sbatch name.sh #it is important to do this from the folder 'RABBIT' but it will depend on how you organize your folders
-```
-#Results: Each sample will have its own folder (i.e. kallisto_results_E283) and inside that folder you will find 3 files: abundance.h5, abundance.tsv, and run_info.json
+The results for each sample will be a separate folder with the name of the sample (-o). That folder will contain three files: abundance.h5, abundance.tsv, and run_info.json
 
 
 
