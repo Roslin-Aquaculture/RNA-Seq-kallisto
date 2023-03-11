@@ -59,6 +59,17 @@ library(tximport)
 library(readr)
 library(DESeq2)
 ```
-
-
-
+To read the output of Kallisto, we first store the route to the directory where the folders are, and move to that folder:
+```
+dir <- "/path/to/kallisto/output/folder"
+setwd(dir)
+```
+We store the names of all the samples (the outputs of kallisto will be in folders with their names):
+```
+samples  <- list.files()
+```
+And use this to generate an object with the path to the folder of each specific sample:
+```
+files <- file.path(dir, samples$V1, "abundance.h5")
+names(files) <- samples
+```
