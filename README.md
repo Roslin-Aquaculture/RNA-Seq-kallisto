@@ -60,6 +60,7 @@ library(readr)
 library(biomaRt)
 library(DESeq2)
 ```
+### 4.1. Loading Kallisto expression estimates
 To read the output of Kallisto, we first store the route to the directory where the folders are, and move to that folder:
 ```
 dir <- "/path/to/kallisto/output/folder"
@@ -74,12 +75,27 @@ And use this to generate an object with the path to the folder of each specific 
 files <- file.path(dir, samples$V1, "abundance.h5")
 names(files) <- samples
 ```
-By default, Kallisto quantifies the expression of every transcript in the transcriptome of the species (i.e. including the different isoforms for each gene), but in most scenarios we will be interested in obtaining gene-level differential expression. Therefore, we need to match the isoforms to genes. If we are using a reference transcriptome from Ensembl, we can get this information using the biomaRt packages:
+By default, Kallisto quantifies the expression of every transcript in the transcriptome of the species (i.e. including the different isoforms for each gene), but in most scenarios we will be interested in obtaining gene-level differential expression. Therefore, we need to match the isoforms to genes. If we are using a reference transcriptome from Ensembl, we can get this information using the biomaRt packages.
+
+First we need to find the name of the database of our species:
 ```
-#First we find the name of the database of our species
 ensembl <- useEnsembl(biomart = "genes")
 searchDatasets(mart = ensembl, pattern = "SPECIES")
-#The search will return the datasets matching the pattern (e.g. the use of "salar" returns "ssalar_gene_ensembl", the Atlantic salmon database)
-#We can use this information to extract the species database
-ensembl <- useEnsembl(biomart = "genes", dataset = "NAMEOFDATABASE")
+```
+The search will return the datasets matching the pattern specified in "SPECIES". We can use this information to extract the species database with:
+```
+my_ensembl <- useEnsembl(biomart = "genes", dataset = "NAMEOFDATABASE")
+```
+Now that we have identified our database, we need to extract the transcript ID with their version (as in the kallisto quantification files) and match them to their genes. We first identify how these two sets are named in this ensembl database. The listAttributes() function displays all available attributes in the selected dataset:
+```
+attributes = listAttributes(my_ensembl)
+head(attributes)
+```
+To match transcripts and genes, we want to select the attributes "ensembl_transcript_id_version" and "ensembl_gene_id". We can extract that information for the whole genome:
+```
+transcript2gene <- getBM(attributes=c("ensembl_transcript_id_version", "ensembl_gene_id"), mart = my_ensembl, values="")
+```
+Now we are finally ready to load the Kallisto expression estimates into R using tximport:
+```
+txi.kallisto.tsv <- tximport(files, type = "kallisto", tx2gene = transcript2gene)
 ```
