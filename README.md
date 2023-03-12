@@ -120,4 +120,6 @@ With our expression matrix and our phenotypes, now we are finally ready to gener
 ```
 data <- DESeqDataSetFromTximport(txi = txi.kallisto.tsv, colData = phenotypes, design = ~ Condition1 + Condition2)
 ```
-The "design" part of the expression is key. It tells DESeq2 what it needs to test, with the last element being the condition that we want to compare, and previous terms representing potential batch effects. The design can be considerably more complex, including interaction terms (see [DESeq2 vignette](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html))
+The "design" part of the expression is key. It tells DESeq2 what it needs to test, with the last element being the condition that we want to compare, and previous terms representing potential batch effects. The design can be considerably more complex, including interaction terms (see [DESeq2 vignette](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html)). It can also be modified later on if necessary (and we will show how below).
+
+
