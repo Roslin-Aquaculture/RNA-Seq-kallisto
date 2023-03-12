@@ -57,6 +57,7 @@ The remaining of the pipeline is performed in R, and requires the installation o
 library(tximportData)
 library(tximport)
 library(readr)
+library(biomaRt)
 library(DESeq2)
 ```
 To read the output of Kallisto, we first store the route to the directory where the folders are, and move to that folder:
