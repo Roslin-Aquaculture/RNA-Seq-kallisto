@@ -74,3 +74,12 @@ And use this to generate an object with the path to the folder of each specific 
 files <- file.path(dir, samples$V1, "abundance.h5")
 names(files) <- samples
 ```
+By default, Kallisto quantifies the expression of every transcript in the transcriptome of the species (i.e. including the different isoforms for each gene), but in most scenarios we will be interested in obtaining gene-level differential expression. Therefore, we need to match the isoforms to genes. If we are using a reference transcriptome from Ensembl, we can get this information using the biomaRt packages:
+```
+#First we find the name of the database of our species
+ensembl <- useEnsembl(biomart = "genes")
+searchDatasets(mart = ensembl, pattern = "SPECIES")
+#The search will return the datasets matching the pattern (e.g. the use of "salar" returns "ssalar_gene_ensembl", the Atlantic salmon database)
+#We can use this information to extract the species database
+ensembl <- useEnsembl(biomart = "genes", dataset = "NAMEOFDATABASE")
+```
