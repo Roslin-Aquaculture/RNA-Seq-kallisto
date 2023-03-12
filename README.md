@@ -58,6 +58,7 @@ library(tximportData)
 library(tximport)
 library(readr)
 library(biomaRt)
+library(editData)
 library(DESeq2)
 ```
 ### 4.1. Loading Kallisto expression estimates
@@ -101,3 +102,12 @@ txi.kallisto.tsv <- tximport(files, type = "kallisto", tx2gene = transcript2gene
 ```
 
 ### 4.2. Differential expression analyses
+We will perform differential expression using DESeq2. To perform differential expression, the first step is to generate a file with the phenotypes. I usually do this outside R (tab-delimited file), but with Rstudio it is also relatively easy to do. We first generate an empty vector with the dimensions that we want. Let´s say we have 20 samples and 3 conditions, then we need 20 rows and 3 columns (which we can already name):
+```
+phenotypes = data.frame(matrix(vector(), 20, 3, dimnames=list(c(), c("Condition1", "Condition2","Condition3"))),stringsAsFactors=F)
+```
+Now we add the names of the samples as row names:
+```
+row.names(phenotypes) <- names(txi.kallisto.tsv$infReps)
+```
+And now we can open
