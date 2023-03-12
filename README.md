@@ -58,7 +58,6 @@ library(tximportData)
 library(tximport)
 library(readr)
 library(biomaRt)
-library(editData)
 library(DESeq2)
 ```
 ### 4.1. Loading Kallisto expression estimates
@@ -76,7 +75,7 @@ And use this to generate an object with the path to the folder of each specific 
 files <- file.path(dir, samples$V1, "abundance.h5")
 names(files) <- samples
 ```
-By default, Kallisto quantifies the expression of every transcript in the transcriptome of the species (i.e. including the different isoforms for each gene), but in most scenarios we will be interested in obtaining gene-level differential expression. Therefore, we need to match the isoforms to genes. If we are using a reference transcriptome from Ensembl, we can get this information using the biomaRt packages.
+By default, Kallisto quantifies the expression of every transcript in the transcriptome of the species (i.e. including the different isoforms for each gene), but in most scenarios we will be interested in obtaining gene-level differential expression. Therefore, we need to match the isoforms to genes. If we are using a reference transcriptome from Ensembl, we can get this information using the [biomaRt package](https://bioconductor.org/packages/release/bioc/html/biomaRt.html).
 
 First we need to find the name of the database of our species:
 ```
@@ -102,12 +101,23 @@ txi.kallisto.tsv <- tximport(files, type = "kallisto", tx2gene = transcript2gene
 ```
 
 ### 4.2. Differential expression analyses
-We will perform differential expression using DESeq2. To perform differential expression, the first step is to generate a file with the phenotypes. I usually do this outside R (tab-delimited file), but with Rstudio it is also relatively easy to do. We first generate an empty vector with the dimensions that we want. Let´s say we have 20 samples and 3 conditions, then we need 20 rows and 3 columns (which we can already name):
+We will perform differential expression using [DESeq2](https://bioconductor.org/packages/release/bioc/html/DESeq2.html). To perform differential expression, the first step is to generate a file with the phenotypes. I usually do this outside R (creating manually a tab-delimited file), but it is also relatively easy to do in R. We first generate an empty vector with the dimensions that we want. Let´s say we have 12 samples and 2 conditions, then we need 12 rows and 2 columns (which we can already name):
 ```
-phenotypes = data.frame(matrix(vector(), 20, 3, dimnames=list(c(), c("Condition1", "Condition2","Condition3"))),stringsAsFactors=F)
+phenotypes = data.frame(matrix(vector(), 12, 2, dimnames=list(c(), c("Condition1", "Condition2"))),stringsAsFactors=F)
 ```
 Now we add the names of the samples as row names:
 ```
 row.names(phenotypes) <- names(txi.kallisto.tsv$infReps)
 ```
-And now we can open
+And now we can add the phenotypes for each sample using a vector:
+```
+phenotypes$Condition1 <- c("A","A","A","A","A","A","B","B","B","B","B","B")
+phenotypes$Condition2 <- c("X","X","X","Y","Y","Y","X","X","X","Y","Y","Y")
+```
+And that generates the object with need with the phenotypes of each sample. As mentioned above, it can also just be generated outside R and loaded as a dataframe with something like "phenotypes <- read.delim('phenotypes.txt', row.names=1)", which is probably more convinient when there are many samples and / or a complex design.
+
+With our expression matrix and our phenotypes, now we are finally ready to generate the DESeq2 object that we are going to use for differential expression:
+```
+data <- DESeqDataSetFromTximport(txi = txi.kallisto.tsv, colData = phenotypes, design = ~ Condition1 + Condition2)
+```
+The "design" part of the expression is key. It tells DESeq2 what it needs to test, with the last element being the condition that we want to compare, and previous terms representing potential batch effects. The design can be considerably more complex, including interaction terms (see [DESeq2 vignette](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html))
