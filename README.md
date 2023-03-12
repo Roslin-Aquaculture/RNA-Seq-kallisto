@@ -99,3 +99,5 @@ Now we are finally ready to load the Kallisto expression estimates into R using 
 ```
 txi.kallisto.tsv <- tximport(files, type = "kallisto", tx2gene = transcript2gene)
 ```
+
+### 4.2. Differential expression analyses
