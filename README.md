@@ -158,7 +158,21 @@ res <- results(dds, contrast=c("combined","AX","BX"))
 ```
 Keep in mind that the order of the variables is important to estimate fold changes, the first one is the numerator and the second one the denominator.
 
-The object "res" has the results of the differential expression for that comparisons (p-values, fold changes and other statistics), but each gene is only identified with its Ensembl ID. We can again use BiomaRt to obtain their annotation.
+The object "res" has the results of the differential expression for that comparisons (p-values, fold changes and other statistics), but each gene is only identified with its Ensembl ID. We can again use BiomaRt to obtain their annotation. We can check the "attributes" object again ("attributes = listAttributes(my_ensembl)") and select the ones we are interested in. We will also need the geneID to match it to our data, which we will assign as the name of the rows
 ```
-
+annotation <- getBM(attributes=c("ensembl_gene_id", "external_gene_name","description"), mart = my_ensembl, values="")
+row.names(annotation) <- annotation$ensembl_gene_id
+annotation <- annotation[-1]
+```
+we match the annotation and the differential expression results:
+```
+res_annotated <- merge(DataFrame(res), annotation, all.x = TRUE, by = "row.names")
+```
+We can  order the results by adjusted p-value and filter those below your threshold of choice (will potentially depend on the number of differentially expressed genes)
+```
+res_annotated <- subset(res_annotated[order(res_annotated$padj),], padj < 0.05)
+```
+Finally, we can save the file in a tab-delimited format to allow inspection using Excel or similar
+```
+write.table(as.data.frame(res_annotated),file="DE-results.txt", sep="\t", row.names = FALSE)
 ```
