@@ -183,11 +183,26 @@ write.table(as.data.frame(res_annotated),file="DE-results.txt", sep="\t", row.na
 An important aspect of any RNA-seq analysis is the visualization of the results. RNA-seq data can be extracted an ploted using any normal software as barplots, boxplots, etc. Here we will show a few that are typical of RNA-seq analyses
 
 #### Volcano Plots
-Volcano plots represent the results of a differential expression test, plotting fold change and p-value in the x and y axis, respectively. 
-
+Volcano plots represent the results of a differential expression test. While DESeq2 has an integrated volcano plot, the packages EnhancedVolcano draws nicer and more customisable plots. It takes the results of DESeq2 as input.
 ```
-EnhancedVolcano(res, x="log2FoldChange", y="padj", lab = "")
+EnhancedVolcano(res_annotated, x="log2FoldChange", y="padj", lab = "")
 ```
 
 ### Heatmaps
-There are multiple packages to facilitate drawing heatmaps
+There are multiple packages to facilitate drawing heatmaps, here we will use pheatmap to draw a heatmap for the 50 top differentially expressed genes according to p-value. First we obtain the IDs of those 50 genes:
+```
+top50 <- res_annotated[1:50,1]
+```
+The heatmaps are generally drawn with normalised expression values. We can use the "vsd" object generated before. The "assay" option can extract the expression values from "vsd", and we want to do it just for the top50 genes:
+```
+top50_expression <- assay(vsd[top50])
+```
+To allow the visualization of all these genes together, the expression values are usually mean centered.
+```
+top50_expression  <- top50_expression - rowMeans(top50_expression)
+```
+Now we can draw the heatmap with
+```
+pheatmap(top50_expression)
+```
+
