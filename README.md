@@ -60,6 +60,8 @@ library(readr)
 library(biomaRt)
 library(DESeq2)
 library(PCAtools)
+library(EnhancedVolcano)
+library("pheatmap")
 ```
 ### 4.1. Loading Kallisto expression estimates
 To read the output of Kallisto, we first store the route to the directory where the folders are, and move to that folder:
@@ -178,3 +180,14 @@ write.table(as.data.frame(res_annotated),file="DE-results.txt", sep="\t", row.na
 ```
 
 ### 4.3. Visualization
+An important aspect of any RNA-seq analysis is the visualization of the results. RNA-seq data can be extracted an ploted using any normal software as barplots, boxplots, etc. Here we will show a few that are typical of RNA-seq analyses
+
+#### Volcano Plots
+Volcano plots represent the results of a differential expression test, plotting fold change and p-value in the x and y axis, respectively. 
+
+```
+EnhancedVolcano(res, x="log2FoldChange", y="padj", lab = "")
+```
+
+### Heatmaps
+There are multiple packages to facilitate drawing heatmaps
