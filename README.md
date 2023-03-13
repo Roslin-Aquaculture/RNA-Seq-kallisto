@@ -209,5 +209,6 @@ We can add colours to identify the different sample groups, and also replace the
 
 ```
 annot <- as.data.frame(colData(vsd)[, c("Condition1","Condition2")])
-pheatmap(top50_expression, annotation_col = annot)
+gene_names <- res_annotated[1:50,"ensembl_gene_id"]
+pheatmap(top50_expression, annotation_col = annot, labels_row = gene_names)
 ```
