@@ -59,6 +59,7 @@ library(tximport)
 library(readr)
 library(biomaRt)
 library(DESeq2)
+library(PCAtools)
 ```
 ### 4.1. Loading Kallisto expression estimates
 To read the output of Kallisto, we first store the route to the directory where the folders are, and move to that folder:
@@ -122,4 +123,42 @@ data <- DESeqDataSetFromTximport(txi = txi.kallisto.tsv, colData = phenotypes, d
 ```
 The "design" part of the expression is key. It tells DESeq2 what it needs to test, with the last element being the condition that we want to compare, and previous terms representing potential batch effects. The design can be considerably more complex, including interaction terms (see [DESeq2 vignette](https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html)). It can also be modified later on if necessary (and we will show how below).
 
+At this stage and prior to differential expression, it is sensible to explore the overall clustering of the samples to ensure that they behave as expected and discard potential mixing of samples in previous steps. To do so, the data first needs to be normalised, otherwise the most expressed genes would have a very large weight. The raw expression data can be normalised with a variance stabilizing transformation, included as part of DESeq2:
+```
+vsd <- varianceStabilizingTransformation(data)
+```
+And to have a quick visualisation of the data, we can use a Principal Components Analysis (PCA) using the DESeq2 function:
+```
+plotPCA(vsd, intgroup = c("Condition1","Condition2"))
+```
+However, the options of this function are quite limited, and the figure in not very pretty, so it is better to use the package PCAtools, which also allows visualising the percentage explained by each PCA and plotting more than two PCAs in the same graph. The use of colours and shapes to represent the different conditions also facilitates the interpretation of the PCA results.
+```
+p <- pca(assay(vsd), metadata = count_info, removeVar = 0.1)
+screeplot(p)   #Percentage explained by each PCA
+biplot(p, colby = 'Condition1', shape="Condition2", legendPosition = 'top', lab = NULL, legendLabSize = 12, legendIconSize = 6, title = "", pointSize=5)
+pairsplot(p, components = c(1:5), triangle = TRUE, trianglelabSize = 12, hline = 0, vline = 0, pointSize = 1, gridlines.major = FALSE, gridlines.minor = FALSE, title = 'Pairs plot', plotaxes = FALSE, margingaps = unit(c(-0.01, -0.01, -0.01, -0.01), 'cm'), colby = 'Condition1', shape="Condition2")
+```
+Inspection of the PCA results might lead to the removal of some samples if they are not clustered as expected or to review previous steps and correction of sample assignments. 
 
+Once we are certain our samples are well classified, we can perform differential expression. As mentioned above, the design variable is key, and you will have to adjuste it as necessary. If "Condition1" represents a batch effect, and "Condition2" is the one we want to test, the above design is fine. However, if both variables are important, and we want to test the different combinations, it is better to generate a new variable that combines both original variables.
+```
+data$combined <- factor(paste0(data$Time, data$Condition))
+```
+And now we can change the design to test differences in expression according to that variable
+```
+design(data) <- ~ combined
+```
+And now we can run the differential expression test. 
+```
+dds <- DESeq(data)
+```
+This will compute the comparisons between all the groups in the "combined" variable. To extract the results for a specific comparison:
+```
+res <- results(dds, contrast=c("combined","AX","BX")) 
+```
+Keep in mind that the order of the variables is important to estimate fold changes, the first one is the numerator and the second one the denominator.
+
+The object "res" has the results of the differential expression for that comparisons (p-values, fold changes and other statistics), but each gene is only identified with its Ensembl ID. We can again use BiomaRt to obtain their annotation.
+```
+
+```
