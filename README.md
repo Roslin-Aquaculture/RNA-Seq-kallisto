@@ -205,4 +205,9 @@ Now we can draw the heatmap with
 ```
 pheatmap(top50_expression)
 ```
+We can add colours to identify the different sample groups, and also replace the Ensembl IDs with gene names
 
+```
+annot <- as.data.frame(colData(vsd)[, c("Condition1","Condition2")])
+pheatmap(top50_expression, annotation_col = annot)
+```
