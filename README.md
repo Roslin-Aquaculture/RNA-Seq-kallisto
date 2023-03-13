@@ -212,3 +212,15 @@ annot <- as.data.frame(colData(vsd)[, c("Condition1","Condition2")])
 gene_names <- res_annotated[1:50,"ensembl_gene_id"]
 pheatmap(top50_expression, annotation_col = annot, labels_row = gene_names)
 ```
+
+### Expression of individual genes
+The function "plotCounts" of DESeq2 has is used to plot the normalised expression of genes
+```
+plotCounts(dds, gene="ENSSSAG00000078016", intgroup=c("Condition1","Condition2"))
+```
+Again, it is possible to draw better plots. For this, we can usse ggplot2, a package to draw figure in R which deserves its own whole course.
+```
+d <- plotCounts(dds, gene="Gene525", intgroup=c("Condition1","Condition2"), returnData = TRUE)
+ggplot(d, aes(x=Condition1, y=count, col=Condition2)) + geom_point(position=position_jitter(w=0.1,h=0), size=1.5) + scale_y_log10() + theme_bw()
+
+```
