@@ -176,3 +176,5 @@ Finally, we can save the file in a tab-delimited format to allow inspection usin
 ```
 write.table(as.data.frame(res_annotated),file="DE-results.txt", sep="\t", row.names = FALSE)
 ```
+
+### 4.3. Visualization
