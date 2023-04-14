@@ -172,11 +172,11 @@ res_annotated <- merge(DataFrame(res), annotation, all.x = TRUE, by = "row.names
 ```
 We can  order the results by adjusted p-value and filter those below your threshold of choice (will potentially depend on the number of differentially expressed genes)
 ```
-res_annotated <- subset(res_annotated[order(res_annotated$padj),], padj < 0.05)
+res_annotated_filtered <- subset(res_annotated[order(res_annotated$padj),], padj < 0.05)
 ```
 Finally, we can save the file in a tab-delimited format to allow inspection using Excel or similar
 ```
-write.table(as.data.frame(res_annotated),file="DE-results.txt", sep="\t", row.names = FALSE)
+write.table(as.data.frame(res_annotated_filtered),file="DE-results.txt", sep="\t", row.names = FALSE)
 ```
 
 ### 4.3. Visualization
