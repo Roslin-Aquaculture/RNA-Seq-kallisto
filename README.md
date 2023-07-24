@@ -54,6 +54,7 @@ The results for each sample will be a separate folder with the name of the sampl
 ## 4. Differential expression using DESeq2
 The remaining of the pipeline is performed in R, and requires the installation of various packages:
 ```
+library(rhdf5)
 library(tximportData)
 library(tximport)
 library(readr)
